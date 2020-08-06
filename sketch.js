@@ -5,38 +5,49 @@ var END = 0;
 var gamestate = PLAY;
 var score = 0;
 
+var text1;
+
+var ending1;
+var ending2;
+
 function setup() {
-  createCanvas(600, 200);
+  createCanvas(displayWidth, displayHeight - 73);
   
-  bee = createSprite(100 ,130, 15, 15);
-  bee.scale = 1;
+  bee = createSprite(10, displayHeight - 60, 15, 15);
   bee.shapeColor = "yellow";
   
-  ground = createSprite(600, 190, 1200, 20);
+  ground = createSprite(0, displayHeight - 60, displayWidth * 2, 80 );
   ground.shapeColor = "green";
-  
+
   ObstacleGroup = new Group();
   AirObstacleGroup = new Group();
-  
-  textSize(18);
-  textFont("Georgia");
-  stroke("orange");
 
+  text1 = createElement('h4');
+  ending1 = createElement('h4')
+  ending2 = createElement('h4');
 }
 
 function draw() {
   background("blue");
-  
+  console.log(bee.y);
   bee.collide(ground);
-  bee.velocityY = bee.velocityY + 0.6;
+  bee.velocityY =+ 0.6;
+  bee.velocityX = 10;
+  ground.velocityX = 10;
+  camera.position.x = bee.x;
+  text1.html("Score: " + score)
+  text1.position(displayWidth - 100, 30);
   
-  if (gamestate === PLAY){
-    
+  if (gamestate === PLAY){ 
     score = Math.round(getFrameRate()/60) + score;
-    
-    if (keyDown("space") && bee.y >= 172.5){
-    bee.velocityY = -13;
+
+    if (ground.x < 0){
+      ground.x = ground.width/2;
     }
+ 
+    if (keyDown("space") && bee.y >= 660){
+    bee.velocityY = -300;
+    }  
     
     if (keyDown("down")){
     bee.velocityY = 10;
@@ -49,35 +60,30 @@ function draw() {
       gamestate = END;
     }
   }
+
   else if(gamestate === END){
-    ObstacleGroup.setVelocityXEach(0);
-    
-    textSize(17); 
-    textFont("Timesnewroman");
-    text("GAME OVER, HOLD THE DOWN KEY TO GLIDE", 110, 100);
-    text("WHEN JUMPING", 230, 120); 
-  
+    ending1.html("GAME OVER, HOLD THE DOWN KEY TO GLIDE")
+    ending1.position(displayWidth/2 - 200, displayHeight/2);
+    ending2.html("WHEN JUMPING")
+    ending2.position(displayWidth/2 - 100, displayHeight/2 + 20);
   }
   
-  text("Score: " + score, 500, 30);
   
   drawSprites();
 }
 
 function SpawnFly(){
-  if (World.frameCount %20 === 0){
-    var Fly = createSprite(600, 30, 20, 20);
+  if (World.frameCount %10 === 0){
+    var Fly = createSprite(bee.x + displayWidth/2, displayHeight - 275, 20, 20);
     Fly.shapeColor = "black";
     AirObstacleGroup.add(Fly);
-    Fly.velocityX = -15;
   }
 }
 
 function SpawnGrass(){
-  if (World.frameCount %30 === 0){
-    var obstacle = createSprite(600, 160, 20, 50);
+  if (World.frameCount %15 === 0){
+    var obstacle = createSprite(bee.x + displayWidth/2, displayHeight - 125, 20, 50);
     ObstacleGroup.add(obstacle);
     obstacle.shapeColor = "green";
-    obstacle.velocityX = -15;
   }
 }
