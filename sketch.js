@@ -10,11 +10,21 @@ var text1;
 var ending1;
 var ending2;
 
+var beeimg, flyimg, bgimg
+
+function preload(){
+  beeimg = loadImage("Bee.png");
+  bgimg = loadImage("BG.jpg");
+  flyimg = loadImage("Fly.png")
+}
+
 function setup() {
   createCanvas(displayWidth, displayHeight - 73);
   
   bee = createSprite(10, displayHeight - 60, 15, 15);
   bee.shapeColor = "yellow";
+  bee.addImage(beeimg)
+  bee.scale = 0.05
   
   ground = createSprite(0, displayHeight - 60, displayWidth * 2, 80 );
   ground.shapeColor = "green";
@@ -28,11 +38,12 @@ function setup() {
 }
 
 function draw() {
-  background("blue");
+  background(bgimg);
   console.log(bee.y);
   bee.collide(ground);
   bee.velocityY =+ 0.6;
   bee.velocityX = 10;
+  AirObstacleGroup.setVelocityXEach(0);
   ground.velocityX = 10;
   camera.position.x = bee.x;
   text1.html("Score: " + score)
@@ -45,7 +56,7 @@ function draw() {
       ground.x = ground.width/2;
     }
  
-    if (keyDown("space") && bee.y >= 660){
+    if (keyDown("space") && bee.y >= 625){
     bee.velocityY = -300;
     }  
     
@@ -62,6 +73,9 @@ function draw() {
   }
 
   else if(gamestate === END){
+    bee.velocityX = 0;
+    ground.velocityX = 0;
+    AirObstacleGroup.setVelocityXEach(-10);
     ending1.html("GAME OVER, HOLD THE DOWN KEY TO GLIDE")
     ending1.position(displayWidth/2 - 200, displayHeight/2);
     ending2.html("WHEN JUMPING")
@@ -75,7 +89,8 @@ function draw() {
 function SpawnFly(){
   if (World.frameCount %10 === 0){
     var Fly = createSprite(bee.x + displayWidth/2, displayHeight - 275, 20, 20);
-    Fly.shapeColor = "black";
+    Fly.addImage(flyimg);
+    Fly.scale = 0.04;
     AirObstacleGroup.add(Fly);
   }
 }
